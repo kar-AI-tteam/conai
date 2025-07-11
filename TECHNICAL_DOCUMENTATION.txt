@@ -1,0 +1,575 @@
+================================================================================
+                          Contour AI - Technical Documentation
+================================================================================
+
+Project Overview
+================================================================================
+
+Contour AI is an AI-powered knowledge base chat application that 
+combines intelligent document management with conversational AI capabilities.
+The application allows users to store, search, and interact with knowledge 
+base content through multiple AI modes with advanced hallucination detection.
+
+Key Features:
+- Multi-mode AI chat (Knowledge Base, AI Assistant, Hybrid)
+- Advanced hallucination detection and mitigation
+- Document processing (PDF, Word, Text, Images with OCR)
+- API configuration management and testing
+- Real-time streaming responses with accuracy monitoring
+- PII detection and masking
+- Multiple storage backends (Local, OpenSearch, Milvus)
+- Swagger/OpenAPI import functionality
+- Dark/Light theme support
+
+Technology Stack
+================================================================================
+
+Frontend:
+- React 18.3.1 with TypeScript
+- Vite 5.4.2 (Build tool and dev server)
+- Tailwind CSS 3.4.1 (Styling)
+- Lucide React (Icons)
+- React Router DOM (Navigation)
+
+Key Libraries:
+- @monaco-editor/react: Code editor component
+- marked: Markdown parsing and rendering
+- dompurify: HTML sanitization
+- tesseract.js: OCR for image text extraction
+- mammoth: Word document processing
+- react-pdf: PDF file handling
+- openai: OpenAI API integration
+- uuid: Unique identifier generation
+
+Backend Services:
+- OpenAI GPT-3.5-turbo (AI responses)
+- OpenSearch (Cloud vector search)
+- Milvus/Zilliz (Vector database)
+- Ollama (Local LLM - Llama3:2b)
+
+Project Structure
+================================================================================
+
+src/
+├── components/           # React components
+│   ├── chat/            # Chat-specific components
+│   ├── controls/        # Reusable UI controls
+│   └── qa/              # Q&A management components
+├── context/             # React context providers
+├── layouts/             # Page layout components
+├── pages/               # Main page components
+├── types/               # TypeScript type definitions
+└── utils/               # Utility functions and helpers
+    ├── storage/         # Storage provider implementations
+    ├── search/          # Search engine implementation
+    └── hallucinationDetector.ts  # AI hallucination detection
+
+Core Architecture
+================================================================================
+
+1. Storage Layer (Multi-Provider Architecture)
+   - StorageManager: Unified interface for different storage backends
+   - LocalStorageProvider: Browser localStorage implementation
+   - OpenSearchProvider: Cloud-based vector search
+   - MilvusProvider: Vector database for embeddings
+   
+2. Search Engine
+   - Local fuzzy search with relevance scoring
+   - Vector-based semantic search
+   - Hybrid search combining keyword and semantic matching
+   - Configurable match thresholds and scoring weights
+
+3. AI Integration
+   - OpenAI GPT-3.5-turbo for cloud-based AI responses
+   - Ollama integration for local LLM inference
+   - Conversation history management
+   - Context-aware follow-up handling
+
+4. Hallucination Detection System (NEW)
+   - Multi-layered detection strategies
+   - Real-time accuracy monitoring
+   - Confidence scoring and mitigation
+   - Context adherence validation
+
+5. Security Layer
+   - PII detection and automatic masking
+   - Input sanitization and XSS prevention
+   - Secure API token handling
+   - Content security policies
+
+Hallucination Detection and Mitigation
+================================================================================
+
+The hallucination detection system is a critical component that ensures
+AI responses are accurate and reliable. It implements multiple detection
+strategies and mitigation techniques.
+
+Detection Strategies:
+
+1. Factual Consistency Check
+   - Detects uncertain language patterns
+   - Identifies speculation indicators
+   - Flags absolute claims without evidence
+   - Patterns: "I think", "probably", "always", "never"
+
+2. Context Adherence Check
+   - Ensures responses stay within knowledge base context
+   - Detects information not present in provided context
+   - Validates proper context referencing
+   - Threshold: >50% novel information triggers warning
+
+3. Confidence Level Check
+   - Monitors AI confidence scores
+   - Detects hedge words indicating uncertainty
+   - Flags responses below confidence thresholds
+   - Threshold: <60% confidence triggers high severity
+
+4. Source Attribution Check
+   - Identifies unsupported claims
+   - Validates source references
+   - Detects missing attribution
+   - Patterns: "studies show", "research indicates"
+
+5. Internal Consistency Check
+   - Identifies contradictory statements
+   - Analyzes sentence-level consistency
+   - Detects logical conflicts
+   - Uses negation pattern matching
+
+Mitigation Strategies:
+
+1. Confidence-Based Filtering
+   - Low confidence (<50%): Strong warning with verification notice
+   - Medium confidence (50-70%): Moderate warning
+   - High confidence (>70%): Minimal or no warning
+
+2. Source Attribution
+   - Automatic source listing when available
+   - "No sources available" notice when applicable
+   - Cross-reference suggestions
+
+3. Uncertainty Quantification
+   - Visual confidence indicators
+   - Color-coded warning levels
+   - Specific recommendations for verification
+
+4. Response Modification
+   - Automatic disclaimer addition
+   - Context reference insertion
+   - Suggestion lists for improvement
+
+Implementation Examples:
+
+Knowledge Base + AI Mode:
+- Validates responses against knowledge base entries
+- Applies context adherence checks
+- Adds source attribution automatically
+- Confidence threshold: 70%
+
+Pure AI Mode:
+- Focuses on confidence and consistency checks
+- Adds AI-generated content disclaimers
+- Recommends Knowledge Base mode for verification
+- Confidence threshold: 60%
+
+Local LLM Mode:
+- Enhanced uncertainty quantification
+- Local processing disclaimers
+- Lower confidence thresholds due to model limitations
+- Confidence threshold: 50%
+
+Chat Modes Explained
+================================================================================
+
+1. Knowledge Base Mode
+   - Direct Q&A from stored knowledge base entries
+   - Fast response times with relevance scoring
+   - Shows match confidence and similar results
+   - Supports streaming responses for better UX
+   - Handles incomplete questions with helpful suggestions
+   - Minimal hallucination risk due to direct retrieval
+
+2. AI Assistant Mode  
+   - Pure AI-powered responses using OpenAI GPT
+   - General knowledge and creative tasks
+   - No knowledge base dependency
+   - Natural conversation flow
+   - Enhanced hallucination detection due to lack of context
+   - Automatic AI-generated content disclaimers
+
+3. Knowledge Base + AI Mode (Hybrid)
+   - Combines knowledge base search with AI synthesis
+   - Maintains conversation context for follow-ups
+   - Uses knowledge base as context for AI responses
+   - Automatically masks PII before sending to AI
+   - Memory management with clear commands
+   - Comprehensive hallucination detection against knowledge base
+   - Source attribution and confidence scoring
+
+4. Local LLM Mode
+   - Uses Ollama with Llama3:2b model
+   - Runs entirely locally (no external API calls)
+   - Privacy-focused for sensitive data
+   - Requires Ollama installation and model download
+   - Enhanced uncertainty quantification
+   - Local processing disclaimers
+
+Entry Types and Management
+================================================================================
+
+1. Text Entries
+   - Rich markdown content with formatting tools
+   - Support for tables, lists, code blocks
+   - File upload support (PDF, Word, Text)
+   - Image OCR for text extraction
+
+2. Table Entries
+   - Interactive table builder
+   - Dynamic row/column management
+   - Markdown table output
+   - Sortable and editable content
+
+3. API Entries
+   - Complete API configuration storage
+   - HTTP method support (GET, POST, PUT, DELETE, PATCH)
+   - Header and payload management
+   - Authentication token support
+   - Request/response testing and formatting
+
+Swagger/OpenAPI Integration
+================================================================================
+
+Features:
+- Automatic URL detection from Swagger UI links
+- Support for OpenAPI 2.0 and 3.0 specifications
+- Bulk import of API endpoints
+- Automatic question generation for each endpoint
+- Keyword extraction from API paths and operations
+- Sample payload generation from schemas
+
+Import Process:
+1. URL validation and CORS handling
+2. Specification fetching and parsing
+3. Endpoint extraction and processing
+4. Entry generation with proper formatting
+5. Duplicate detection and handling
+6. Batch import with progress tracking
+
+Storage Provider Details
+================================================================================
+
+1. LocalStorage Provider
+   - Browser-based storage using localStorage API
+   - JSON serialization/deserialization
+   - Size limitations (~5-10MB depending on browser)
+   - Instant availability, no network dependency
+   - User-specific storage with identifier prefixes
+
+2. OpenSearch Provider
+   - AWS OpenSearch cloud service integration
+   - Full-text search with relevance scoring
+   - Automatic index creation and mapping
+   - Retry logic with exponential backoff
+   - Support for complex queries and filters
+
+3. Milvus Provider
+   - Vector database for semantic search
+   - OpenAI embeddings integration
+   - Collection management and indexing
+   - Similarity search with configurable parameters
+   - Support for metadata filtering
+
+Search Implementation
+================================================================================
+
+Search Engine Features:
+- Multi-field search (question, answer, keywords)
+- Relevance scoring with configurable weights
+- Stop word filtering for better accuracy
+- Consecutive word matching bonuses
+- Fuzzy matching with typo tolerance
+- Minimum match threshold filtering
+
+Scoring Algorithm:
+- Exact matches: 100% score
+- All words match: 90% score  
+- Most words match (>75%): 70% score
+- Some words match (>50%): 50% score
+- Few words match (>25%): 30% score
+- Partial matches: 20% score
+
+Question Processing:
+- Automatic question prefix removal
+- Incomplete question detection
+- Nonsensical query filtering
+- Significant word extraction
+
+Security and Privacy
+================================================================================
+
+PII Detection:
+- Email addresses (partial masking)
+- Phone numbers (last 4 digits visible)
+- Social Security Numbers (full masking)
+- Credit card numbers (full masking)
+- Driver's license numbers (full masking)
+- Passport numbers (full masking)
+- Bank account numbers (full masking)
+- Physical addresses (number masking only)
+
+Content Sanitization:
+- HTML sanitization using DOMPurify
+- Markdown parsing with security controls
+- XSS prevention in user inputs
+- Safe code block rendering
+- URL validation and sanitization
+
+Hallucination Prevention:
+- Multi-layered detection algorithms
+- Real-time accuracy monitoring
+- Confidence-based response filtering
+- Context validation against knowledge base
+- Automatic disclaimer and warning systems
+
+API Integration
+================================================================================
+
+API Handler Features:
+- Support for all HTTP methods
+- Automatic content type detection
+- Streaming response support
+- Authentication token management
+- CORS handling and error reporting
+- Request/response logging
+- Timeout and retry logic
+
+Response Formatting:
+- JSON pretty-printing
+- Error message enhancement
+- Request details inclusion
+- Status code interpretation
+- Header information display
+
+Development Setup
+================================================================================
+
+Prerequisites:
+- Node.js 18+ 
+- npm or yarn package manager
+- Modern web browser with ES2020 support
+
+Environment Variables:
+- VITE_OPENAI_API_KEY: OpenAI API key for AI responses
+- VITE_OPENSEARCH_DOMAIN: OpenSearch domain endpoint
+- VITE_OPENSEARCH_USERNAME: OpenSearch authentication username
+- VITE_OPENSEARCH_PASSWORD: OpenSearch authentication password
+- VITE_OPENSEARCH_REGION: AWS region for OpenSearch
+- VITE_MILVUS_ADDRESS: Milvus/Zilliz connection URL
+- VITE_MILVUS_TOKEN: Milvus authentication token
+
+Installation:
+1. Clone the repository
+2. Run `npm install` to install dependencies
+3. Copy `.env.example` to `.env` and configure variables
+4. Run `npm run dev` to start development server
+5. Open http://localhost:3000 in browser
+
+Build and Deployment:
+- `npm run build`: Create production build
+- `npm run preview`: Preview production build locally
+- `npm run deploy:s3`: Deploy to AWS S3 (requires configuration)
+
+Testing and Debugging
+================================================================================
+
+Development Tools:
+- React Developer Tools browser extension
+- Vite HMR for instant updates
+- TypeScript for compile-time error checking
+- ESLint for code quality
+- Browser console for runtime debugging
+
+Hallucination Detection Testing:
+- Console logging of detection results
+- Real-time confidence monitoring
+- Test scenarios for different hallucination types
+- Validation against known accurate responses
+
+Common Issues:
+1. CORS errors with external APIs
+   - Solution: Use CORS proxy or configure server headers
+2. Storage provider unavailability
+   - Solution: Automatic fallback to localStorage
+3. Large file processing timeouts
+   - Solution: Chunked processing and progress indicators
+4. Memory issues with large knowledge bases
+   - Solution: Pagination and lazy loading
+5. False positive hallucination detection
+   - Solution: Adjust confidence thresholds and detection patterns
+
+Performance Considerations
+================================================================================
+
+Optimization Strategies:
+- Component lazy loading with React.lazy()
+- Memoization of expensive calculations
+- Debounced search inputs
+- Virtual scrolling for large lists
+- Image lazy loading and compression
+- Bundle splitting and code splitting
+- Service worker caching (future enhancement)
+
+Memory Management:
+- Cleanup of event listeners and timers
+- Proper disposal of file readers
+- Conversation history limits
+- Search result pagination
+- Garbage collection friendly patterns
+
+Hallucination Detection Performance:
+- Efficient pattern matching algorithms
+- Cached detection results for repeated content
+- Asynchronous processing to avoid UI blocking
+- Configurable detection depth and complexity
+
+Monitoring:
+- Performance API for timing measurements
+- Error boundary components for crash handling
+- Console logging with appropriate levels
+- User action tracking for UX improvements
+- Hallucination detection metrics and analytics
+
+Future Enhancements
+================================================================================
+
+Planned Features:
+- Real-time collaboration
+- Advanced analytics and insights
+- Custom AI model integration
+- Enhanced file format support
+- Mobile application
+- Enterprise SSO integration
+- Advanced search filters
+- Bulk operations interface
+- API rate limiting and quotas
+- Advanced security features
+
+Hallucination Detection Improvements:
+- Machine learning-based detection models
+- User feedback integration for model training
+- Domain-specific detection patterns
+- Multi-language hallucination detection
+- Advanced semantic consistency checking
+- Integration with external fact-checking APIs
+
+Technical Debt:
+- Migration to React 19 when stable
+- Upgrade to Vite 6.x
+- Enhanced TypeScript strict mode
+- Comprehensive test suite
+- Performance monitoring integration
+- Accessibility improvements (WCAG compliance)
+- Internationalization (i18n) support
+
+Contributing Guidelines
+================================================================================
+
+Code Standards:
+- Use TypeScript for all new code
+- Follow React functional component patterns
+- Implement proper error boundaries
+- Add JSDoc comments for complex functions
+- Use semantic commit messages
+- Maintain test coverage above 80%
+- Include hallucination detection tests for AI-related features
+
+File Organization:
+- Keep components under 300 lines
+- Use proper imports/exports
+- Organize by feature, not by file type
+- Create dedicated directories for related components
+- Remove unused files and dependencies
+
+Best Practices:
+- Implement proper loading states
+- Handle edge cases gracefully
+- Use proper TypeScript types
+- Follow accessibility guidelines
+- Optimize for performance
+- Document complex business logic
+- Test hallucination detection scenarios
+
+Troubleshooting Guide
+================================================================================
+
+Common Error Messages:
+
+1. "Storage provider not available"
+   - Check network connectivity
+   - Verify environment variables
+   - Try switching to localStorage mode
+
+2. "Failed to generate AI response"
+   - Verify OpenAI API key
+   - Check API rate limits
+   - Ensure proper network access
+
+3. "Import failed: CORS error"
+   - Use direct JSON spec URL instead of UI URL
+   - Try CORS proxy service
+   - Contact API provider for CORS configuration
+
+4. "Search returned no results"
+   - Check spelling and try different keywords
+   - Verify knowledge base has relevant entries
+   - Try using broader search terms
+
+5. "File processing failed"
+   - Ensure file is not corrupted
+   - Check file size limits
+   - Verify supported file format
+
+6. "Hallucination detected"
+   - Review the response for accuracy
+   - Check knowledge base for relevant context
+   - Consider adjusting confidence thresholds
+   - Verify source attribution
+
+Debug Mode:
+- Open browser developer tools
+- Check console for error messages
+- Monitor network tab for failed requests
+- Use React Developer Tools for component inspection
+- Enable verbose logging in localStorage: 
+  localStorage.setItem('debug', 'true')
+- Monitor hallucination detection results in console
+
+Contact and Support
+================================================================================
+
+For technical issues:
+1. Check this documentation first
+2. Review browser console for errors
+3. Check GitHub issues for known problems
+4. Create detailed bug reports with:
+   - Steps to reproduce
+   - Expected vs actual behavior
+   - Browser and version information
+   - Console error messages
+   - Screenshots if applicable
+   - Hallucination detection logs if relevant
+
+For feature requests:
+1. Check existing roadmap
+2. Provide detailed use case description
+3. Include mockups or examples if possible
+4. Consider implementation complexity
+5. Discuss with team before starting development
+
+================================================================================
+                              End of Documentation
+================================================================================
+
+Last Updated: January 2025
+Version: 2.0.0 (Added Hallucination Detection)
+Maintainer: Development Team

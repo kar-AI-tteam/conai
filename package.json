@@ -1,0 +1,50 @@
+{
+  "name": "contour-ai",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "deploy:s3": "node scripts/deploy-s3.js"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
+    "@zilliz/milvus2-sdk-node": "^2.3.5",
+    "dompurify": "^3.0.8",
+    "lucide-react": "^0.344.0",
+    "mammoth": "^1.6.0",
+    "marked": "^12.0.0",
+    "openai": "^4.28.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-pdf": "^7.7.0",
+    "react-quill": "^2.0.0",
+    "react-router-dom": "^6.22.0",
+    "tesseract.js": "^5.0.5",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-s3": "^3.511.0",
+    "@eslint/js": "^9.9.1",
+    "@tailwindcss/typography": "^0.5.10",
+    "@types/dompurify": "^3.0.5",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@types/uuid": "^9.0.8",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.18",
+    "eslint": "^9.9.1",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.11",
+    "globals": "^15.9.0",
+    "mime-types": "^2.1.35",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.3.0",
+    "vite": "^5.4.2"
+  }
+}
