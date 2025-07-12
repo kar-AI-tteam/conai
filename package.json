@@ -8,6 +8,11 @@
     "build": "tsc && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "test": "node test/testRunner.ts",
+    "test:ingestion": "node -e \"require('./test/testRunner').runIngestionTests(require('./test/testSetup').setupTestEnvironment())\"",
+    "test:retrieval": "node -e \"require('./test/testRunner').runRetrievalTests(require('./test/testSetup').setupTestEnvironment())\"",
+    "test:multitenancy": "node -e \"require('./test/testRunner').runMultiTenancyTests(require('./test/testSetup').setupTestEnvironment())\"",
+    "test:performance": "node -e \"require('./test/testRunner').runPerformanceTests(require('./test/testSetup').setupTestEnvironment())\"",
     "deploy:s3": "node scripts/deploy-s3.js"
   },
   "dependencies": {

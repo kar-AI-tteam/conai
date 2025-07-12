@@ -19,7 +19,8 @@ import {
   Settings,
   Check,
   Info,
-  ArrowRight
+  ArrowRight,
+  Shield
 } from 'lucide-react';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { StorageType } from '../utils/storage/types';
@@ -251,6 +252,14 @@ export const Header: React.FC<HeaderProps> = ({
           title="Documentation"
         >
           <BookOpenText size={20} />
+        </Link>
+        
+        <Link
+          to="/admin"
+          className="p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 hover:scale-105"
+          title="Admin Dashboard"
+        >
+          <Shield size={20} />
         </Link>
         
         <ThemeSwitcher />

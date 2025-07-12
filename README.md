@@ -1,6 +1,6 @@
-# Contour AI - AI-Powered Knowledge Base Chat
+# Contour AI - Enterprise RAG System
 
-A modern, feature-rich chat application for managing and accessing knowledge base content with AI-powered responses.
+A modern, feature-rich AI-powered knowledge base chat application with enterprise-grade Retrieval Augmented Generation capabilities.
 
 ![Contour AI Screenshot](https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&q=80&w=1000)
 
@@ -22,6 +22,32 @@ A modern, feature-rich chat application for managing and accessing knowledge bas
   - General knowledge and creative tasks
   - Natural conversation flow
 
+- 🖥️ **Local LLM Mode**
+  - Runs entirely locally using Ollama with Llama3
+  - No data sent to external services
+  - Privacy-focused for sensitive information
+
+### Enterprise RAG Framework
+- 🏢 **Multi-Tenant Architecture**
+  - Logical data isolation between tenants
+  - Tenant-specific configurations and quotas
+  - Role-based access control
+
+- 🔍 **Advanced Retrieval**
+  - Hybrid search (vector + keyword)
+  - Re-ranking for improved relevance
+  - Metadata filtering and faceted search
+
+- 📊 **Admin Dashboard**
+  - Usage metrics and analytics
+  - System health monitoring
+  - Tenant management
+
+- 🔄 **MCP Orchestrator**
+  - Query classification and routing
+  - Context construction
+  - Prompt templating and compression
+
 ### Core Features
 - 📝 Rich text editing with Markdown support
 - 📊 Interactive table builder
@@ -33,43 +59,18 @@ A modern, feature-rich chat application for managing and accessing knowledge bas
 - 📦 Import/Export functionality
 
 ### Privacy & Security
-- 🛡️ Automatic PII (Personal Identifiable Information) detection
-- 🔒 Full masking for sensitive data:
-  - Social Security Numbers
-  - Credit card numbers
-  - Driver's license numbers
-  - Passport numbers
-  - Bank account numbers
-- 👁️ Partial masking for:
-  - Email addresses (first/last characters visible)
-  - Phone numbers (last 4 digits visible)
-  - Address numbers
+- 🛡️ Automatic PII detection and masking
+- 🔒 Full masking for sensitive data
+- 👁️ Partial masking for semi-sensitive data
 - 🔐 Regular numbers and non-sensitive data remain visible
+- 🧠 Advanced hallucination detection and mitigation
 
 ## 🛠️ Tech Stack
 
 ### Core Technologies
-- **React 18.3.1**
-  - Functional components
-  - React Hooks
-  - Context API
-  - Strict Mode
-
-- **TypeScript 5.5.3**
-  - Static typing
-  - Enhanced IDE support
-  - Type safety
-
-- **Vite 5.4.2**
-  - Fast HMR
-  - Optimized build process
-  - ESM-based dev server
-
-- **Tailwind CSS 3.4.1**
-  - Utility-first CSS
-  - Custom configuration
-  - Typography plugin
-  - Dark mode support
+- **React 18.3.1** with TypeScript
+- **Vite 5.4.2** for fast development and optimized builds
+- **Tailwind CSS 3.4.1** for utility-first styling
 
 ### Key Libraries
 - **@monaco-editor/react**: Code editor component
@@ -78,89 +79,19 @@ A modern, feature-rich chat application for managing and accessing knowledge bas
 - **openai**: OpenAI API integration
 - **react-pdf**: PDF file handling
 - **tesseract.js**: OCR for image text extraction
+- **@zilliz/milvus2-sdk-node**: Vector database client
+
+### Storage Options
+- **LocalStorage**: Browser-based storage
+- **OpenSearch**: Cloud vector search
+- **Milvus/Zilliz**: Vector database for embeddings
 
 ## 📋 Prerequisites 
 
 - Node.js 18+
 - npm or yarn
-- AWS account (for S3 deployment)
-
-## 🚀 Deployment to AWS S3
-
-### 1. S3 Bucket Setup
-
-1. Create an S3 bucket:
-   - Open AWS Console
-   - Go to S3 service
-   - Create a new bucket
-   - Enable "Static website hosting"
-   - Set index.html as both index and error document
-
-2. Configure bucket policy:
-   ```json
-   {
-     "Version": "2012-10-17",
-     "Statement": [
-       {
-         "Sid": "PublicReadGetObject",
-         "Effect": "Allow",
-         "Principal": "*",
-         "Action": "s3:GetObject",
-         "Resource": "arn:aws:s3:::your-bucket-name/*"
-       }
-     ]
-   }
-   ```
-
-### 2. AWS Authentication
-
-Ensure AWS credentials are configured using one of these methods:
-- AWS CLI: `aws configure`
-- Environment variables:
-  ```bash
-  export AWS_ACCESS_KEY_ID="your-access-key"
-  export AWS_SECRET_ACCESS_KEY="your-secret-key"
-  ```
-- IAM role (if running on AWS infrastructure)
-
-### 3. Deployment Configuration
-
-1. Update deployment configuration in `scripts/deploy-s3.js`:
-   ```javascript
-   const config = {
-     bucketName: 'your-bucket-name',
-     region: 'your-bucket-region',
-     buildDir: 'dist'
-   };
-   ```
-
-2. Install deployment dependencies:
-   ```bash
-   npm install
-   ```
-
-### 4. Deploy
-
-Run the deployment script:
-```bash
-npm run deploy:s3
-```
-
-The script will:
-1. Build the application
-2. Clean up existing files in S3
-3. Upload new files with proper content types
-4. Configure caching headers
-5. Provide the website URL
-
-### 5. Features
-- Progress tracking during upload
-- Automatic content type detection
-- Smart caching strategy:
-  - 1 year cache for static assets
-  - No cache for HTML files
-- Error handling and reporting
-- Cleanup of old files
+- OpenAI API key (for AI features)
+- Ollama (for local LLM mode)
 
 ## 🏃‍♂️ Development
 
@@ -176,19 +107,30 @@ npm run build
 
 # Preview production build
 npm run preview
-
-# Run linting
-npm run lint
 ```
 
 ## 🧪 Testing
 
+The Enterprise RAG framework includes a comprehensive test suite:
+
 ```bash
-# Run tests
+# Run all tests
 npm run test
 
-# Run tests in watch mode
-npm run test:watch
+# Run specific test categories
+npm run test:ingestion
+npm run test:retrieval
+npm run test:multitenancy
+npm run test:performance
+```
+
+## 🚀 Deployment
+
+### AWS S3 Deployment
+
+```bash
+# Deploy to S3
+npm run deploy:s3
 ```
 
 ## 📦 Project Structure
@@ -196,15 +138,48 @@ npm run test:watch
 ```
 contour-ai/
 ├── src/
-│   ├── components/    # React components
-│   ├── context/       # React context providers
-│   ├── layouts/       # Page layouts
-│   ├── pages/         # Page components
-│   ├── types/         # TypeScript types
-│   └── utils/         # Utility functions
-├── public/            # Static assets
-└── scripts/          # Deployment scripts
+│   ├── components/       # React components
+│   │   ├── chat/         # Chat-specific components
+│   │   ├── controls/     # Reusable UI controls
+│   │   ├── enterprise/   # Enterprise RAG components
+│   │   └── qa/           # Q&A management components
+│   ├── context/          # React context providers
+│   ├── layouts/          # Page layouts
+│   ├── pages/            # Page components
+│   ├── services/         # Enterprise RAG services
+│   │   ├── mcpOrchestrator.ts
+│   │   ├── retrieverEngine.ts
+│   │   ├── dataIngestion.ts
+│   │   ├── tenantService.ts
+│   │   ├── LLMService.ts
+│   │   └── pluginManager.ts
+│   ├── types/            # TypeScript types
+│   └── utils/            # Utility functions
+├── test/                 # Test suite
+│   ├── testConfig.js     # Test configuration
+│   ├── testSetup.js      # Test environment setup
+│   ├── testRunner.js     # Main test runner
+│   ├── ingestionTests.js # Data ingestion tests
+│   ├── retrievalTests.js # Retrieval engine tests
+│   └── testReporting.js  # Test reporting utilities
+└── scripts/              # Deployment scripts
 ```
+
+## 🧠 Hallucination Detection
+
+Contour AI implements a sophisticated hallucination detection system:
+
+### Detection Strategies
+- **Factual Consistency**: Detects uncertain language and speculation
+- **Context Adherence**: Ensures responses stay within knowledge base context
+- **Confidence Level**: Flags responses with low AI confidence
+- **Source Attribution**: Detects unsupported claims
+- **Internal Consistency**: Identifies contradictory statements
+
+### Mitigation Techniques
+- **Confidence Filtering**: Adds appropriate warnings based on confidence level
+- **Source Attribution**: Automatically adds source references
+- **Uncertainty Quantification**: Clearly indicates confidence levels
 
 ## 🤝 Contributing
 

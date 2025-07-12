@@ -5,10 +5,19 @@
 Project Overview
 ================================================================================
 
+Project Overview
+================================================================================
+
 Contour AI is an AI-powered knowledge base chat application that 
 combines intelligent document management with conversational AI capabilities.
 The application allows users to store, search, and interact with knowledge 
 base content through multiple AI modes with advanced hallucination detection.
+
+## New Enterprise RAG Framework
+
+The system has been enhanced with an enterprise-grade Retrieval Augmented Generation
+framework that provides multi-tenant support, advanced retrieval capabilities, and
+comprehensive data ingestion for various formats.
 
 Key Features:
 - Multi-mode AI chat (Knowledge Base, AI Assistant, Hybrid)
@@ -20,6 +29,10 @@ Key Features:
 - Multiple storage backends (Local, OpenSearch, Milvus)
 - Swagger/OpenAPI import functionality
 - Dark/Light theme support
+- Multi-tenant architecture with data isolation
+- Enterprise-grade RAG orchestration
+- Hybrid search with re-ranking
+- Comprehensive data ingestion pipeline
 
 Technology Stack
 ================================================================================
@@ -40,6 +53,14 @@ Key Libraries:
 - react-pdf: PDF file handling
 - openai: OpenAI API integration
 - uuid: Unique identifier generation
+### Enterprise RAG Components
+
+- **MCP Orchestrator**: Central component that coordinates the RAG workflow
+- **Retriever Engine**: Hybrid search with vector and keyword capabilities
+- **Data Ingestion Service**: Multi-format document processing
+- **Tenant Manager**: Multi-tenant isolation and management
+- **LLM Service**: Model abstraction layer for different LLM providers
+
 
 Backend Services:
 - OpenAI GPT-3.5-turbo (AI responses)
@@ -63,6 +84,26 @@ src/
     ├── storage/         # Storage provider implementations
     ├── search/          # Search engine implementation
     └── hallucinationDetector.ts  # AI hallucination detection
+
+### Enterprise RAG Structure
+
+test/                    # Test suite for Enterprise RAG
+├── testConfig.ts        # Test configuration
+├── testSetup.ts         # Test environment setup
+├── testRunner.ts        # Main test runner
+├── ingestionTests.ts    # Data ingestion tests
+├── retrievalTests.ts    # Retrieval engine tests
+├── multiTenancyTests.ts # Multi-tenancy tests
+├── performanceTests.ts  # Performance tests
+└── testReporting.ts     # Test reporting utilities
+
+src/services/            # Enterprise RAG services
+├── mcpOrchestrator.ts   # Model Context Protocol orchestrator
+├── retrieverEngine.ts   # Hybrid retrieval engine
+├── dataIngestion.ts     # Data ingestion pipeline
+├── tenantService.ts     # Tenant management service
+├── LLMService.ts        # LLM abstraction layer
+└── pluginManager.ts     # Plugin management for data sources
 
 Core Architecture
 ================================================================================
@@ -350,6 +391,117 @@ Response Formatting:
 - Status code interpretation
 - Header information display
 
+Enterprise RAG Architecture
+================================================================================
+
+The Enterprise RAG system follows a layered architecture:
+
+1. API Gateway Layer
+   - Authentication and authorization
+   - Rate limiting and quota management
+   - Tenant isolation
+   - Request/response logging
+
+2. MCP (Model Context Protocol) Orchestrator
+   - Query classification and routing
+   - Context construction
+   - Retrieval with re-ranking
+   - Prompt construction and compression
+   - LLM generation
+   - Hallucination detection
+   - Response assembly
+
+3. Retriever Engine
+   - Hybrid search (vector + keyword)
+   - Metadata filtering
+   - Re-ranking
+   - Document retrieval
+
+4. Data Ingestion Pipeline
+   - Multi-format support (PDF, Word, HTML, etc.)
+   - Chunking strategies
+   - Metadata extraction
+   - Embedding generation
+
+5. Storage Layer
+   - Vector store (Milvus)
+   - Keyword search (Elasticsearch)
+   - Metadata database
+
+6. LLM Layer
+   - Model abstraction
+   - Prompt engineering
+   - Streaming support
+
+7. Monitoring and Observability
+   - Logging
+   - Metrics
+   - Alerting
+
+Testing the Enterprise RAG Framework
+================================================================================
+
+The Enterprise RAG framework includes a comprehensive test suite to validate
+all aspects of the system. The test suite is located in the `test/` directory.
+
+## Running Tests
+
+```bash
+# Run all tests
+npm run test
+
+# Run specific test categories
+npm run test:ingestion
+npm run test:retrieval
+npm run test:multitenancy
+npm run test:performance
+```
+
+## Test Categories
+
+1. **Data Ingestion Tests**
+   - Tests the ingestion pipeline for different data formats
+   - Validates chunking strategies
+   - Tests OCR capabilities
+   - Verifies metadata extraction
+
+2. **Retrieval Tests**
+   - Tests vector search capabilities
+   - Tests keyword search capabilities
+   - Tests hybrid search with different weights
+   - Validates metadata filtering
+   - Tests re-ranking capabilities
+
+3. **Multi-Tenancy Tests**
+   - Tests tenant isolation
+   - Validates user permissions
+   - Tests cross-tenant access controls
+   - Verifies tenant quota management
+
+4. **Performance Tests**
+   - Tests query latency
+   - Tests ingestion throughput
+   - Tests concurrent query handling
+   - Monitors memory usage
+   - Verifies system health
+
+## Adding New Tests
+
+To add new tests to the framework:
+
+1. Identify the appropriate test category
+2. Create a new test function in the corresponding test file
+3. Add the test to the test runner
+4. Update the test reporting to include the new test
+
+## Test Data
+
+The test suite uses sample data located in the `test/data/` directory:
+
+- `pdfs/` - Sample PDF documents
+- `json/` - Sample JSON data
+- `images/` - Sample images for OCR testing
+
 Development Setup
 ================================================================================
 
@@ -373,6 +525,13 @@ Installation:
 3. Copy `.env.example` to `.env` and configure variables
 4. Run `npm run dev` to start development server
 5. Open http://localhost:3000 in browser
+
+Testing:
+- `npm run test`: Run all tests
+- `npm run test:ingestion`: Run ingestion tests
+- `npm run test:retrieval`: Run retrieval tests
+- `npm run test:multitenancy`: Run multi-tenancy tests
+- `npm run test:performance`: Run performance tests
 
 Build and Deployment:
 - `npm run build`: Create production build
@@ -439,6 +598,33 @@ Monitoring:
 - User action tracking for UX improvements
 - Hallucination detection metrics and analytics
 
+Enterprise RAG Best Practices
+================================================================================
+
+1. **Data Ingestion**
+   - Use appropriate chunking strategies for different document types
+   - Enable OCR for scanned documents
+   - Extract and store rich metadata for better filtering
+   - Implement incremental sync for data sources
+
+2. **Retrieval**
+   - Tune vector/keyword weights based on query types
+   - Use re-ranking for improved relevance
+   - Implement metadata filtering for security and relevance
+   - Monitor and log retrieval quality
+
+3. **Multi-Tenancy**
+   - Enforce strict tenant isolation
+   - Implement fine-grained access controls
+   - Monitor tenant resource usage
+   - Set appropriate quotas based on tenant needs
+
+4. **Performance**
+   - Cache frequently accessed documents
+   - Optimize chunking for retrieval performance
+   - Use streaming for large responses
+   - Monitor system health and performance metrics
+
 Future Enhancements
 ================================================================================
 
@@ -462,6 +648,14 @@ Hallucination Detection Improvements:
 - Advanced semantic consistency checking
 - Integration with external fact-checking APIs
 
+Enterprise RAG Enhancements:
+- Federated search across multiple vector stores
+- Advanced chunking strategies with semantic awareness
+- Multi-modal RAG (text, images, audio)
+- Automated knowledge base maintenance
+- Self-healing system with automated error recovery
+- Advanced analytics dashboard for RAG performance
+
 Technical Debt:
 - Migration to React 19 when stable
 - Upgrade to Vite 6.x
@@ -470,6 +664,35 @@ Technical Debt:
 - Performance monitoring integration
 - Accessibility improvements (WCAG compliance)
 - Internationalization (i18n) support
+
+Troubleshooting Enterprise RAG
+================================================================================
+
+Common Issues:
+
+1. **Ingestion Failures**
+   - Check file format compatibility
+   - Verify OCR settings for scanned documents
+   - Check storage capacity and quotas
+   - Verify file permissions
+
+2. **Retrieval Issues**
+   - Check vector store connectivity
+   - Verify embedding model is working
+   - Check query formatting and preprocessing
+   - Verify tenant isolation is not blocking results
+
+3. **Performance Problems**
+   - Monitor memory usage during ingestion
+   - Check for slow database queries
+   - Verify LLM response times
+   - Check for resource contention between tenants
+
+4. **Multi-Tenancy Issues**
+   - Verify tenant isolation in queries
+   - Check user permissions
+   - Verify quota enforcement
+   - Check for cross-tenant access attempts
 
 Contributing Guidelines
 ================================================================================
@@ -498,6 +721,14 @@ Best Practices:
 - Optimize for performance
 - Document complex business logic
 - Test hallucination detection scenarios
+
+Enterprise RAG Development Guidelines:
+- Follow the MCP protocol for all RAG implementations
+- Ensure all data sources have proper tenant isolation
+- Implement comprehensive error handling
+- Add detailed logging for all operations
+- Write tests for all new features
+- Document all API endpoints and parameters
 
 Troubleshooting Guide
 ================================================================================
@@ -544,6 +775,15 @@ Debug Mode:
   localStorage.setItem('debug', 'true')
 - Monitor hallucination detection results in console
 
+Enterprise RAG Debugging:
+- Use the test suite to isolate issues
+- Check component health status
+- Verify tenant isolation
+- Monitor resource usage
+- Check for rate limiting or quota issues
+- Verify LLM API connectivity
+- Check vector store health
+
 Contact and Support
 ================================================================================
 
@@ -570,6 +810,6 @@ For feature requests:
                               End of Documentation
 ================================================================================
 
-Last Updated: January 2025
-Version: 2.0.0 (Added Hallucination Detection)
+Last Updated: July 2025
+Version: 3.0.0 (Added Enterprise RAG Framework)
 Maintainer: Development Team

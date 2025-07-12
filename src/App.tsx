@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { MainLayout } from './layouts/MainLayout';
 import { ChatPage } from './pages/ChatPage';
 import { Documentation } from './pages/Documentation';
+import { AdminDashboard } from './components/enterprise/AdminDashboard';
 import { LoginPage } from './components/LoginPage';
 import QAManagementModal from './components/QAManagementModal';
 import { User } from './types/qa';
@@ -187,6 +188,46 @@ export default function App() {
           </MainLayout>
         } />
         <Route path="/docs" element={<Documentation />} />
+        <Route 
+          path="/admin" 
+          element={
+            currentUser ? (
+              <AdminDashboard 
+                currentTenant={{ 
+                  id: 'tenant-1',
+                  name: currentUser.username + "'s Organization",
+                  domain: 'example.com',
+                  settings: {
+                    maxUsers: 100,
+                    maxDocuments: 10000,
+                    maxQueries: 50000,
+                    retentionDays: 365,
+                    allowedDataSources: ['pdf', 'word', 'html', 'json', 'api', 'csv', 'excel']
+                  },
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString()
+                }}
+                tenantManager={{
+                  getUsageMetrics: async () => ({
+                    tenantId: 'tenant-1',
+                    period: 'current',
+                    queries: 15420,
+                    documents: 8750,
+                    tokens: 1250000,
+                    costs: 123.45,
+                    latency: {
+                      avg: 250,
+                      p95: 450,
+                      p99: 750
+                    }
+                  })
+                }}
+              />
+            ) : (
+              <LoginPage onLoginSuccess={handleLoginSuccess} />
+            )
+          }
+        />
       </Routes>
 
       <QAManagementModal
